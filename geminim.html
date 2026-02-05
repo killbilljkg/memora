@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memora | Tangible Memories</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-soft: #eef2ff;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.85);
+            --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { background: var(--light); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--dark); line-height: 1.6; overflow-x: hidden; }
+
+        /* -------- NAVIGATION -------- */
+        header { background: var(--glass); backdrop-filter: blur(15px); padding: 15px 0; position: fixed; top: 0; width: 100%; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .container { width: 90%; max-width: 1200px; margin: auto; }
+        .nav { display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 24px; font-weight: 800; color: var(--dark); letter-spacing: -1px; }
+        .logo span { color: var(--primary); }
+        .nav-links a { margin: 0 15px; text-decoration: none; color: var(--dark); font-size: 14px; font-weight: 600; opacity: 0.6; transition: 0.3s; }
+        .nav-links a:hover { opacity: 1; color: var(--primary); }
+
+        /* -------- REFINED HERO -------- */
+        .hero { 
+            padding: 180px 0 100px; 
+            background: radial-gradient(circle at 80% 20%, #e0e7ff 0%, #f8fafc 50%);
+            position: relative;
+        }
+        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .hero-tag { display: inline-block; padding: 6px 14px; background: var(--primary-soft); color: var(--primary); border-radius: 100px; font-size: 12px; font-weight: 700; margin-bottom: 20px; }
+        .hero h1 { font-size: clamp(48px, 6vw, 72px); line-height: 1.05; font-weight: 800; letter-spacing: -3px; margin-bottom: 24px; }
+        .hero h1 span { color: var(--primary); }
+        .hero p { font-size: 19px; color: #475569; margin-bottom: 40px; max-width: 500px; }
+        
+        .hero-visual { position: relative; }
+        .main-badge { width: 380px; height: 380px; border-radius: 50%; background: #fff; padding: 10px; box-shadow: 0 40px 80px rgba(0,0,0,0.1); animation: float 6s ease-in-out infinite; }
+        .main-badge img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .floating-label { position: absolute; background: #fff; padding: 12px 20px; border-radius: 100px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); font-weight: 700; font-size: 14px; }
+        .l1 { top: 20%; left: -10%; }
+        .l2 { bottom: 15%; right: -5%; }
+
+        /* -------- HOW IT WORKS (The Flow) -------- */
+        .how-section { padding: 100px 0; background: #fff; }
+        .section-header { text-align: center; margin-bottom: 70px; }
+        .section-header h2 { font-size: 42px; letter-spacing: -1.5px; }
+        
+        .flow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .flow-step { text-align: center; padding: 20px; }
+        .step-num { width: 40px; height: 40px; background: var(--primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-weight: 800; }
+        .flow-step h4 { margin-bottom: 10px; font-size: 18px; }
+        .flow-step p { font-size: 14px; color: #64748b; }
+
+        /* -------- USE CASES (Emotional Content) -------- */
+        .moments { padding: 100px 0; background: #f1f5f9; }
+        .moments-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .moment-card { height: 400px; border-radius: 24px; overflow: hidden; position: relative; cursor: crosshair; }
+        .moment-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
+        .moment-card:hover img { transform: scale(1.1); }
+        .moment-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); display: flex; align-items: flex-end; padding: 30px; color: #fff; }
+
+        /* -------- FOOTER -------- */
+        footer { background: var(--dark); color: #fff; padding: 80px 0 40px; }
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 60px; margin-bottom: 60px; }
+        .footer-logo { font-size: 28px; font-weight: 800; margin-bottom: 20px; }
+        .footer-logo span { color: var(--primary); }
+        .footer-col h4 { margin-bottom: 25px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; }
+        .footer-col a { display: block; color: #cbd5e1; text-decoration: none; margin-bottom: 12px; transition: 0.3s; }
+        .footer-col a:hover { color: var(--primary); }
+        .newsletter input { width: 100%; padding: 14px; border-radius: 10px; border: none; background: #1e293b; color: #fff; margin-bottom: 10px; }
+        
+        /* -------- UI COMPONENTS -------- */
+        .btn-primary { background: var(--primary); color: #fff; padding: 16px 32px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; transition: var(--transition); }
+        .btn-primary:hover { background: #4f46e5; transform: scale(1.05); box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4); }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        @media (max-width: 900px) {
+            .hero-grid, .flow-grid, .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .hero-content p { margin: 0 auto 40px; }
+            .main-badge { width: 280px; height: 280px; margin: 0 auto; }
+        }
+         .btn-outline { 
+            background: transparent; border: 1.5px solid #e2e8f0; 
+            padding: 11px 22px; border-radius: 12px; color: var(--dark); 
+            font-weight: 600; cursor: pointer; transition: var(--transition);
+        }
+        .btn-outline:hover { background: #f1f5f9; border-color: var(--dark); }
+
+                /* -------- PRODUCT CHOOSE SECTION -------- */
+                .choose { padding: 100px 0; background: #fff; }
+        .choose-header { text-align: center; margin-bottom: 60px; }
+        .eyebrow { color: var(--primary); font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 2px; }
+        
+        .choose-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        .choice-card {
+            background: var(--light);
+            border-radius: 24px;
+            padding: 40px;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .choice-card:hover { 
+            background: #fff; 
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            transform: translateY(-10px);
+        }
+        .choice-card h3 { font-size: 24px; margin: 15px 0; letter-spacing: -0.5px; }
+        .choice-card p { color: #64748b; font-size: 15px; margin-bottom: 20px; }
+             /* -------- MODAL & PREVIEW -------- */
+             .modal {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal.active { display: flex; }
+        .modal-box {
+            background: #fff; width: 95%; max-width: 500px;
+            border-radius: 30px; padding: 40px; position: relative;
+        }
+        .preview-circle {
+            width: 200px; height: 200px; margin: 20px auto;
+            border-radius: 50%; border: 4px solid #f1f5f9;
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+            background: #f8fafc; position: relative;
+        }
+        .preview-circle::after {
+            content: "58mm"; position: absolute; bottom: 10px; font-size: 10px; color: #94a3b8; font-weight: 700;
+        }
+        .preview-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+        input[type="file"], select, input[type="number"] {
+            width: 100%; padding: 14px; margin: 8px 0 20px;
+            border-radius: 12px; border: 1px solid #e2e8f0; font-family: inherit;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        @media(max-width: 768px) {
+            .choose-grid { grid-template-columns: 1fr; }
+            .hero-content h1 { font-size: 42px; }
+            .nav-links { display: none; }
+        }
+        /* Responsive adjustment for the story section */
+    @media (max-width: 900px) {
+        #story .container {
+            grid-template-columns: 1fr;
+            gap: 40px;
+            text-align: center;
+        }
+        #story .container div:nth-child(2) {
+            order: -1; /* Image first on mobile */
+        }
+        .story-content div {
+            justify-content: center;
+        }
+    }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container nav">
+        <div class="logo">MEMORA<span>.</span></div>
+        <div class="nav-links">
+            <a href="#hero">Start</a>
+            <a href="#how">Process</a>
+            <a href="#collection">Styles</a>
+            <a href="#moments">Stories</a>
+        </div>
+        <button class="btn-primary" style="padding: 10px 20px; font-size: 14px;" onclick="openModal()">Design Now</button>
+    </div>
+</header>
+
+<section class="hero" id="hero">
+    <div class="container hero-grid">
+        <div class="hero-content">
+            <span class="hero-tag">New: Premium Matte Finish Available</span>
+            <h1>Hold your <span>memories</span> in your hand.</h1>
+            <p>We transform your favorite digital moments into handcrafted 58mm badges. Choose between magnets, pins, or keychains.</p>
+            <div class="hero-actions">
+                <button class="btn-primary" onclick="openModal()">Create Your Badge</button>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="floating-label l1">✨ High Gloss Finish</div>
+            <div class="floating-label l2">📦 Fast Shipping</div>
+            <div class="main-badge">
+                <img src="https://images.unsplash.com/photo-1516724562728-afc824a36e84?q=80&w=600" alt="Memory Badge">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="story" style="padding: 120px 0; background: #fff; overflow: hidden;">
+    <div class="container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;">
+        
+        <div style="position: relative;">
+            <div style="width: 100%; height: 500px; border-radius: 40px; overflow: hidden; background: #f1f5f9;">
+                <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=800" alt="Travel and Memories" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="position: absolute; -right: 30px; -bottom: 30px; background: var(--primary); color: #fff; padding: 30px; border-radius: 30px; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);">
+                <p style="font-size: 24px; font-weight: 800; line-height: 1.2;">58mm<br><span style="font-weight: 400; opacity: 0.8; font-size: 16px;">of pure quality</span></p>
+            </div>
+        </div>
+
+        <div class="story-content">
+            <span class="eyebrow" style="color: var(--primary); font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 2px;">Why we started</span>
+            <h2 style="font-size: 48px; line-height: 1.1; margin: 20px 0; letter-spacing: -2px;">It started with a <span style="color: var(--primary);">blurry</span> souvenir.</h2>
+            
+            <p style="color: #475569; font-size: 18px; margin-bottom: 25px; line-height: 1.8;">
+                Like you, we love to explore. But every time we reached for a souvenir to remember a trip, we were disappointed. The photos were grainy, the materials felt cheap, and they never truly captured the magic of the moment.
+            </p>
+            
+            <p style="color: #475569; font-size: 18px; margin-bottom: 30px; line-height: 1.8;">
+                We thought: <strong>"Why can't we just print our own memories?"</strong> 
+            </p>
+
+            <div style="background: var(--light); padding: 30px; border-radius: 20px; border-left: 4px solid var(--primary);">
+                <p style="font-style: italic; color: var(--dark); font-weight: 500;">
+                    "Memora was born to bridge that gap. We combine your personal, high-definition memories with premium craftsmanship—at a price that makes sense."
+                </p>
+            </div>
+
+            <div style="margin-top: 40px; display: flex; gap: 40px;">
+                <div>
+                    <h4 style="font-size: 24px; font-weight: 800;">HD</h4>
+                    <p style="font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Print Quality</p>
+                </div>
+                <div>
+                    <h4 style="font-size: 24px; font-weight: 800;">Fair</h4>
+                    <p style="font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Pricing</p>
+                </div>
+                <div>
+                    <h4 style="font-size: 24px; font-weight: 800;">100%</h4>
+                    <p style="font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Customized</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="choose" class="choose">
+    <div class="container">
+        <div class="choose-header">
+            <span class="eyebrow">The Collection</span>
+            <h2>Three ways to hold on</h2>
+        </div>
+        <div class="choose-grid">
+            <div class="choice-card" onclick="openModal('Magnet')">
+                <div>
+                    <span class="eyebrow">01</span>
+                    <h3>Magnet Badge</h3>
+                    <p>Turn your fridge into a gallery of favorite smiles and places.</p>
+                </div>
+                <button class="btn-outline">Select Magnet</button>
+            </div>
+            <div class="choice-card" onclick="openModal('Pin badge')">
+                <div>
+                    <span class="eyebrow">02</span>
+                    <h3>Pin Badge</h3>
+                    <p>The classic aesthetic. Perfect for denim jackets and backpacks.</p>
+                </div>
+                <button class="btn-outline">Select Pin</button>
+            </div>
+            <div class="choice-card" onclick="openModal('Keychain')">
+                <div>
+                    <span class="eyebrow">03</span>
+                    <h3>Keychain</h3>
+                    <p>A durable reminder of what matters, everywhere you go.</p>
+                </div>
+                <button class="btn-outline">Select Keychain</button>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="how-section" id="how">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow">The Process</span>
+            <h2>Simple. Tangible. Yours.</h2>
+        </div>
+        <div class="flow-grid">
+            <div class="flow-step">
+                <div class="step-num">1</div>
+                <h4>Upload</h4>
+                <p>Pick a photo from your phone or Instagram.</p>
+            </div>
+            <div class="flow-step">
+                <div class="step-num">2</div>
+                <h4>Personalize</h4>
+                <p>Select Magnet, Pin, or Keychain style.</p>
+            </div>
+            <div class="flow-step">
+                <div class="step-num">3</div>
+                <h4>Crafting</h4>
+                <p>We print and press your badge by hand.</p>
+            </div>
+            <div class="flow-step">
+                <div class="step-num">4</div>
+                <h4>Delivered</h4>
+                <p>Arrives at your door in eco-friendly packaging.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="moments" id="moments">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow">Inspiration</span>
+            <h2>Badges for every story</h2>
+        </div>
+        <div class="moments-grid">
+            <div class="moment-card">
+                <img src="https://images.unsplash.com/photo-1533228890825-657ad31e46b9?q=80&w=400" alt="Travel">
+                <div class="moment-overlay"><h3>Travel Keepsakes</h3></div>
+            </div>
+            <div class="moment-card">
+                <img src="https://images.unsplash.com/photo-1522673607200-1648832cee98?q=80&w=400" alt="Pet">
+                <div class="moment-overlay"><h3>Pet Portraits</h3></div>
+            </div>
+            <div class="moment-card">
+                <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=400" alt="Event">
+                <div class="moment-overlay"><h3>Wedding Favors</h3></div>
+            </div>
+            <div class="moment-card">
+                <img src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=400" alt="Art">
+                <div class="moment-overlay"><h3>Custom Branding</h3></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal" id="orderModal">
+    <div class="modal-box">
+        <h2 style="letter-spacing: -1px;">Customize Your Badge</h2>
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Your memory, perfectly cropped.</p>
+
+        <label style="font-weight:600; font-size: 14px;">1. Upload Image</label>
+        <input type="file" accept="image/*" id="imageInput">
+
+        <div class="preview-circle" id="preview">
+            <span style="color: #cbd5e1; font-size: 12px; text-align: center; padding: 20px;">Image will appear here</span>
+        </div>
+
+        <label style="font-weight:600; font-size: 14px;">2. Choose Type</label>
+        <select id="typeSelect">
+            <option value="Magnet">Magnet Badge</option>
+            <option value="Pin badge">Pin Badge</option>
+            <option value="Keychain">Keychain Badge</option>
+        </select>
+
+        <div style="display: flex; gap: 15px; margin-top: 10px;">
+            <button class="btn-outline" style="flex: 1;" onclick="closeModal()">Cancel</button>
+            <button class="btn-primary" style="flex: 2;">Add to Cart</button>
+        </div>
+    </div>
+</div>
+
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="footer-logo">MEMORA<span>.</span></div>
+                <p style="color: #94a3b8; font-size: 14px;">Bringing your memories to life, one badge at a time. Based in the heart of creativity.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <a href="#">Magnet Badges</a>
+                <a href="#">Pin Badges</a>
+                <a href="#">Keychains</a>
+                <a href="#">Bulk Orders</a>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <a href="#">Shipping Policy</a>
+                <a href="#">Refunds</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-col newsletter">
+                <h4>Stay Inspired</h4>
+                <input type="email" placeholder="Email address">
+                <button class="btn-primary" style="width: 100%; padding: 12px;">Join Newsletter</button>
+            </div>
+        </div>
+        <div style="padding-top: 40px; border-top: 1px solid #1e293b; display: flex; justify-content: space-between; font-size: 13px; color: #64748b;">
+            <p>© 2026 Memora Inc. All rights reserved.</p>
+            <div>
+                <a href="#" style="color: #64748b; text-decoration: none; margin-left: 20px;">Privacy</a>
+                <a href="#" style="color: #64748b; text-decoration: none; margin-left: 20px;">Terms</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+<script>const modal = document.getElementById("orderModal");
+    const typeSelect = document.getElementById("typeSelect");
+
+    function openModal(type = 'Magnet') {
+        modal.classList.add("active");
+        typeSelect.value = type;
+    }
+
+    function closeModal() {
+        modal.classList.remove("active");
+    }
+
+    modal.addEventListener("click", e => {
+        if(e.target === modal) closeModal();
+    });
+
+    document.getElementById("imageInput").addEventListener("change", e => {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            document.getElementById("preview").innerHTML = `<img src="${reader.result}">`;
+        }
+        reader.readAsDataURL(file);
+    });</script>
+</html>
